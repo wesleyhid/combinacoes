@@ -1,4 +1,3 @@
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +24,7 @@ public class GeraNumeros {
 	private JTextField txtqtnum;
 	private JButton btnNewButton;
 	private JTextField txt_path;
+	private JTextField txt_seq;
     
 	/**
 	 * Launch the application.
@@ -57,7 +57,7 @@ public class GeraNumeros {
 		frmGeraoDeCombines = new JFrame();
 		frmGeraoDeCombines.setTitle("Gerador de combina\u00E7\u00F5es");
 		frmGeraoDeCombines.getContentPane().setLayout(null);
-		frmGeraoDeCombines.setSize(470,231);
+		frmGeraoDeCombines.setSize(470,266);
 		frmGeraoDeCombines.setLocationRelativeTo(null);
 
 		JLabel lblNmMnimo = new JLabel("N\u00FAm. m\u00EDnimo");
@@ -131,11 +131,34 @@ public class GeraNumeros {
 					return;
 				}
 				
-				CalculaCombinacoes combinacoes = new CalculaCombinacoes(min_int,max_int,qtnum_int,txt_path.getText());
+				String seq_str = txt_seq.getText();
+				int seq_int = 0;
+				try{
+					if(!txt_seq.getText().isEmpty()) seq_int = Integer.parseInt(seq_str);
+				}catch(NumberFormatException ex){
+					JOptionPane.showMessageDialog(frmGeraoDeCombines,"Número de sequência inválida. Mensagem de erro: \n" +  ex.getMessage());
+					return;
+				}
+				
+				
+				if(seq_int > qtnum_int){
+					JOptionPane.showMessageDialog(frmGeraoDeCombines,"Número de sequência não pode ser maior que a quantidade de números na combinação!");
+					return;
+				}else if(seq_int == 1){
+					JOptionPane.showMessageDialog(frmGeraoDeCombines,"Número de sequência deve ser maior que 1!");
+					return;
+				}
+				
+				CalculaCombinacoes combinacoes = new CalculaCombinacoes(min_int,max_int,qtnum_int,seq_int,txt_path.getText());
 				
 				//JOptionPane.showMessageDialog(frmGeraoDeCombines,"Começou!" + " Nº total de combinações: " + combinacoes.getNumberOfCombinations());
 				combinacoes.calcula();
-				JOptionPane.showMessageDialog(frmGeraoDeCombines,"Acabou!" + " Nº total de combinações: " + combinacoes.getNumberOfCombinations());
+				
+				long total = combinacoes.getNumberOfCombinations();
+				int afterFilter = combinacoes.getNumberOfCombinationsAfterFilter();
+				long removed = total- afterFilter;
+				
+				JOptionPane.showMessageDialog(frmGeraoDeCombines,"Acabou!" + " \nNº total de combinações: " + total + "\nNº de combinações após filtro: " + afterFilter + "\nNº de combinações removidas após filtro: " + removed);
 				
 			}
 		});
@@ -143,22 +166,22 @@ public class GeraNumeros {
 		frmGeraoDeCombines.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnNewButton.setBounds(143, 119, 181, 62);
+		btnNewButton.setBounds(143, 145, 181, 62);
 		frmGeraoDeCombines.getContentPane().add(btnNewButton);
 		
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon("dinheiro.jpg"));
-		label.setBounds(243, 11, 201, 67);
+		label.setIcon(new ImageIcon(GeraNumeros.class.getResource("/javax/swing/plaf/metal/icons/dinheiro.jpg")));
+		label.setBounds(243, 11, 201, 92);
 		frmGeraoDeCombines.getContentPane().add(label);
 		
 		txt_path = new JTextField();
 		txt_path.setHorizontalAlignment(SwingConstants.RIGHT);
 		txt_path.setColumns(10);
-		txt_path.setBounds(143, 88, 181, 20);
+		txt_path.setBounds(143, 114, 181, 20);
 		frmGeraoDeCombines.getContentPane().add(txt_path);
 		
 		JLabel lblCaminhoDeExportao = new JLabel("Salvar em");
-		lblCaminhoDeExportao.setBounds(10, 91, 108, 14);
+		lblCaminhoDeExportao.setBounds(10, 117, 108, 14);
 		frmGeraoDeCombines.getContentPane().add(lblCaminhoDeExportao);
 		
 		JButton btnSelecionar = new JButton("Selecionar");
@@ -172,7 +195,7 @@ public class GeraNumeros {
 				else	
 					chooser.setCurrentDirectory(new java.io.File("."));
 				
-				chooser.setDialogTitle("choosertitle");
+				chooser.setDialogTitle("Selecione a pasta de destino");
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				chooser.setAcceptAllFileFilterUsed(false);
 
@@ -186,13 +209,20 @@ public class GeraNumeros {
 			}
 		});
 		
-		btnSelecionar.setBounds(334, 89, 110, 23);
+		btnSelecionar.setBounds(334, 115, 110, 23);
 		frmGeraoDeCombines.getContentPane().add(btnSelecionar);
+		
+		JLabel lblSequnciaNoPermit = new JLabel("Sequ\u00EAncia n\u00E3o permit.");
+		lblSequnciaNoPermit.setBounds(10, 89, 135, 14);
+		frmGeraoDeCombines.getContentPane().add(lblSequnciaNoPermit);
+		
+		txt_seq = new JTextField();
+		txt_seq.setColumns(10);
+		txt_seq.setBounds(143, 86, 90, 20);
+		frmGeraoDeCombines.getContentPane().add(txt_seq);
 		
 			
 	}
-	        
-	
 }
 
 

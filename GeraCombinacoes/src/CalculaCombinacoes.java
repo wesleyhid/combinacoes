@@ -13,19 +13,22 @@ public class CalculaCombinacoes {
 	private int _end;
 	private int _start;
 	private int _n;
+	private int _nSeq;
 	private String _pathToSave;
 
-	public CalculaCombinacoes(int start, int end, int n, String pathToSave){
+	public CalculaCombinacoes(int start, int end, int n, int nSeq, String pathToSave){
 		_start = start;
 		_end = end;
 		_n = n;
+		_nSeq = nSeq;
 		String oldChar = "\\";
 		String newChar = "//";
 		_pathToSave = pathToSave.replace(oldChar.charAt(0),newChar.charAt(0));
 	}
 	
 	public void calcula(){
-		getNumberOfCombinations();
+		num_comb = 0;
+		calculateNumberOfCombinations();
 		endCol = totalComb.intValue() / endLine;
 		if(endCol > 16000) endCol = 16000;
 		if(endCol == 0) endCol = 1;
@@ -65,7 +68,7 @@ public class CalculaCombinacoes {
 				getCombinations(result,i + 1, end, n, size);
 			}
 		}
-		if(comb.split("  ").length - 1 == n) {
+		if((comb.split("  ").length - 1 == n) && !isGreaterOrEqualToSeq(comb)) {
 			num_comb++;
 			
 			escreve(comb + ";");
@@ -73,6 +76,24 @@ public class CalculaCombinacoes {
 		}
 	}
 	
+	
+	private boolean isGreaterOrEqualToSeq(String seq){
+		if(_nSeq > 0){
+			String [] num = seq.trim().split("  ");
+			
+			int conta = 1;
+			for(int i=1; i < num.length; i++){
+				if(Integer.parseInt(num[i]) == Integer.parseInt(num[i-1])+1){
+					conta++;
+					if(conta >= _nSeq) return true;
+				}else{
+					conta=0;
+				}
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	private void escreve(String output){
@@ -105,6 +126,10 @@ public class CalculaCombinacoes {
 	}
 	
 	public long getNumberOfCombinations(){
+		return totalComb;
+	}
+	
+	private long calculateNumberOfCombinations(){
 		long n2 = _end - _start + 1;
 		long n1 = n2 - _n;
 		totalComb = pk(n2,n1)/p(_n);
@@ -112,6 +137,11 @@ public class CalculaCombinacoes {
 		
 		return totalComb;
 	}
+	
+	public int getNumberOfCombinationsAfterFilter(){
+		return num_comb;
+	}
+	
 	
 	
 }
